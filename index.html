@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+        body {
+            margin: 40px auto;
+            max-width: 650px;
+            line-height: 1.6;
+            font-size: 18px;
+            font-family: "Courier New", Courier, monospace;
+            color: #444;
+            padding: 0 10px;
+        }
+
+        h2 {
+            line-height: 1.2;
+        }
+        #input {
+            width: 100%;
+            height: 50px;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Torrent Video Streamer</h2>
+    <p>Enter the magnet url:</p>
+    <div>
+        <input type="text" id="input"> <br> <br>
+        <button type="submit" id="submit">Get Video</button>
+    </div>
+    <p>
+        Feel free to seek through the video and it only loads the part you want to
+        watch
+    </p>
+    <video id="videoPlayer" width="650" controls muted="muted" autoplay>
+        <source src="/video" type="video/mp4" />
+    </video>
+    <p id="logs"></p>
+</body>
+<script>
+    const video = document.getElementById("videoPlayer");
+    const src = video.children[0]
+    video.innerHTML = "";
+
+    const input = document.getElementById("input");
+    const submit = document.getElementById("submit");
+
+    submit.addEventListener("click", async function(){
+        submit.disabled = true
+        const response = await fetch(`/sendMagnet?magnet=${input.value}`)
+        video.appendChild(src)
+    })
+    var source = new EventSource('/status')
+
+    source.addEventListener('message', function (e) {
+        console.log(e.data)
+        document.getElementById("logs").innerHTML = e.data;
+    }, false)
+</script>
+
+</html>
