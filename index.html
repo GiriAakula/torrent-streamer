@@ -53,12 +53,14 @@
     submit.addEventListener("click", async function(){
         submit.disabled = true
         const response = await fetch(`/sendMagnet?magnet=${input.value}`)
-        video.appendChild(src)
     })
     var source = new EventSource('/status')
 
     source.addEventListener('message', function (e) {
         console.log(e.data)
+        if(e.data === "Done"){
+            video.appendChild(src)
+        }
         document.getElementById("logs").innerHTML = e.data;
     }, false)
 </script>
