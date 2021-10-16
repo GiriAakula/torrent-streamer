@@ -93,9 +93,11 @@ async function main(magnet) {
             await seedr.deleteFolder(videos.flat()[0].fid);
         }
         fs.readdir(`${__dirname}/downloads`, (err, files) => {
+
             if (err) return;
             for (const file of files) {
               fs.unlink(path.join(`${__dirname}/downloads`, file), err => {
+                  console.log('deleting previous files')
                 if (err) throw err;
               });
             }
