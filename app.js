@@ -89,7 +89,7 @@ async function main(magnet) {
         await seedr.login("giriakula3@gmail.com", "9701732638");
         var contents = [];
         const videos = await seedr.getVideos();
-        if(videos.flat()[0].fid){
+        if(videos?.flat()[0]?.fid){
             await seedr.deleteFolder(videos.flat()[0].fid);
         }
         fs.readdir(`${__dirname}/downloads`, (err, files) => {
