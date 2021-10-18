@@ -5,7 +5,7 @@ const express = require("express");
 const app = express();
 const fs = require("fs");
 const path = require('path');
-let sendStatus, sendMagnetStatus;
+let sendStatus;
 let movieName = '';
 
 app.get("/", function (req, res) {
@@ -17,12 +17,10 @@ app.get("/sendMagnet", function(req, res){
     if(req.query.magnet){
         main(req.query.magnet)
         sendStatus(`${req.query.magnet} has been received`)
+        res.sendStatus(200)
     }else {
         res.send({error: "Magnet link is required"})
         sendStatus(`A proper magnet link is required.`)
-    }
-    sendMagnetStatus = function(){
-        res.sendStatus(200)
     }
 });
 
@@ -127,7 +125,6 @@ async function main(magnet) {
               })
             await downloader.download();
             sendStatus(`Done`)
-            sendMagnetStatus()
         }
     } catch (error) {
         console.log(error, 'error')
