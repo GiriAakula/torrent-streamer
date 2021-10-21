@@ -58,7 +58,8 @@
 
     source.addEventListener('message', function (e) {
         console.log(e.data)
-        if(e.data === "Done"){
+        if(e.data.includes("Done")){
+            src.src = e.data.split("|||")[1]
             video.appendChild(src)
         }
         document.getElementById("logs").innerHTML = e.data;
