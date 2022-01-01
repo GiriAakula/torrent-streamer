@@ -33,7 +33,7 @@ app.get("/videoUrl", function (req, res) {
             let timestamp = db.getData(`/users/${username}/timestamp`);
             let timeDiff = Math.abs(new Date().getTime() - timestamp) / 1000;
             console.log(timeDiff)
-            if(timeDiff > 30){
+            if(timeDiff > 150){
                 res.json({timeout:true})
                 return;
             }
