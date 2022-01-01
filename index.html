@@ -19,51 +19,116 @@
         h2 {
             line-height: 1.2;
         }
+
         #input {
             width: 100%;
             height: 50px;
+        }
+        .form-field {
+            width: 100%;
+            height: 50px;
+        }
+
+        .password-field {
+            margin: 10px 0 10px 0;
+        }
+
+        #video-block {
+            display: none;
+        }
+        #statusText {
+            display: none;
         }
     </style>
 </head>
 
 <body>
     <h2>Torrent Video Streamer</h2>
-    <p>Enter the magnet url:</p>
-    <div>
-        <input type="text" id="input"> <br> <br>
-        <button type="submit" id="submit">Get Video</button>
+    <div id="form-block">
+        <p>Enter Seedr username and password:</p>
+        <form>
+            <input type="text" name="username" id="username" placeholder="username" class="form-field"/>
+            <input type="password" name="password" id="password" placeholder="password" class="password-field form-field" />
+        </form>
+        <p>Enter the magnet url:</p>
+        <div>
+            <input type="text" id="input" placeholder="Magnet link"> <br> <br>
+            <button type="submit" id="submit">Get Video</button>
+            <span id="statusText">Getting your video...</span>
+        </div>
     </div>
-    <p>
-        Feel free to seek through the video and it only loads the part you want to
-        watch
-    </p>
-    <video id="videoPlayer" width="650" controls muted="muted" autoplay>
-        <source src="/video" type="video/mp4" />
-    </video>
-    <p id="logs"></p>
+    <div id="video-block">
+        <p>
+            Feel free to seek through the video and it only loads the part you want to
+            watch
+        </p>
+        <video id="videoPlayer" width="650" controls muted="muted" autoplay>
+            <source src="/video" type="video/mp4" />
+        </video>
+        <p id="logs"></p>
+    </div>
 </body>
 <script>
     const video = document.getElementById("videoPlayer");
-    const src = video.children[0]
+    const src = video.children[0];
+    var statusFunc;
     video.innerHTML = "";
 
     const input = document.getElementById("input");
+    const username = document.getElementById("username");
+    const password = document.getElementById("password");
     const submit = document.getElementById("submit");
 
-    submit.addEventListener("click", async function(){
-        submit.disabled = true
-        const response = await fetch(`/sendMagnet?magnet=${input.value}`)
-    })
-    var source = new EventSource('/status')
+    submit.addEventListener("click", async function (e) {
+        e.preventDefault();
+        submit.disabled = true;
+        document.getElementById("statusText").style.display = "block";
+        console.log(input.value, username.value, password.value);
+        if(input.value && username.value && password.value) {
+            const response = await fetch(`/newUser`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    magnet: input.value,
+                    username: username.value,
+                    password: password.value
+                })
+            }).then(res => {
+                if(res.status === 200) {
+                    setTimeout(() => {
+                        statusFunc();
+                    }, 2000);
+                }
+            });
 
-    source.addEventListener('message', function (e) {
-        console.log(e.data)
-        if(e.data.includes("Done")){
-            src.src = e.data.split("|||")[1]
-            video.appendChild(src)
+        } else {
+            alert("Please fill all the fields");
         }
-        document.getElementById("logs").innerHTML = e.data;
-    }, false)
+    })
+
+    statusFunc = function(){
+        fetch("/videoUrl?username=" + username.value).then(res => {
+            if(res.status === 204 || res.status === 404){
+                setTimeout(() => {
+                    statusFunc();
+                }, 2000);
+            } else {
+                res.json().then(data => {
+                    console.log(data);
+                    if(data.timeout){
+                        alert("Server taking longer than expected. Please try again later. Make sure the details you entered are correct.");
+                    }else {
+                        document.getElementById("video-block").style.display = "block";
+                        document.getElementById("form-block").style.display = "none";
+                        video.src = data.url;
+                    }
+                });
+            }
+        });
+    }
+
 </script>
 
 </html>

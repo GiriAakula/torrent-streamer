@@ -4,14 +4,24 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start":"node app.js"
+    "start": "nodemon app.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.19.1",
     "express": "^4.17.1",
-    "nodejs-file-downloader": "^4.7.4",
+    "node-json-db": "^1.4.1",
+    "nodemon": "^2.0.15",
     "seedr": "^1.1.2"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "user_database.json",
+      "node_modules/**",
+      "package.json"
+    ],
+    "delay": 2500
   }
 }
