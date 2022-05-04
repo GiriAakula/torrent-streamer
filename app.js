@@ -57,8 +57,8 @@ async function main(magnet, usrname, pasword) {
         let username = "";
         let password = "";
         if (usrname === "me" && pasword === "me") {
-            username = "giriakula3@gmail.com";
-            password = "9701732638"
+            username = "ENTER_YOUR_USERNAME_HERE";
+            password = "ENTER_YOUR_PASSWORD_HERE"
         } else {
             username = usrname;
             password = pasword;
